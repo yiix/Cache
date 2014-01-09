@@ -146,9 +146,8 @@ class Helper
         $primaryKey = $model->getTableSchema()->primaryKey;
         if (is_array($primaryKey)) {
             if (!is_array($pk)) {
-                $val = array_shift($pk);
                 if ($val) {
-                    $tagValues[array_shif($primaryKey)] = $val;
+                    $tagValues[array_shift($primaryKey)] = $pk;
                 }
             } else {
                 foreach ($pk as $key=>$val) {
@@ -262,50 +261,27 @@ class Helper
         }
 
         if ($value[0] == ':') {
+            $prefix = null;
+        }
 
-            $alias = $value = ltrim($value, ':');
+        $alias = $value = ltrim($value, ':');
 
-            foreach ($tags as $k => $v){
-                if ($k == $value) {
-                    if (is_array($v)) {
-                        return array_map(function($a) use ($alias) {
-                            if (in_array(gettype($a),array('integer','double'))) {
-                                $a = number_format($a, 0, '', '');
-                            }
-                            return $alias.'='.$a;
-                        },$v);
-                    } else {
-                        if (in_array(gettype($v),array('integer','double'))) {
-                            $v = number_format($v, 0, '', '');
+        foreach ($tags as $k => $v){
+            if ($k == $value) {
+                if (is_array($v)) {
+                    return array_map(function($a) use ($alias,$prefix) {
+                        if (in_array(gettype($a),array('integer','double'))) {
+                            $a = number_format($a, 0, '', '');
                         }
-                        return $alias.'='.$v;
+                        return (!empty($prefix)?$prefix.'_':'').$alias.'='.$a;
+                    },$v);
+                } else {
+                    if (in_array(gettype($v),array('integer','double'))) {
+                        $v = number_format($v, 0, '', '');
                     }
+                    return (!empty($prefix)?$prefix.'_':'').$alias.'='.$v;
                 }
             }
-
-        } else {
-
-            $alias = $value;
-            foreach ($tags as $k => $v){
-                if ($k == $value) {
-                    if (is_array($v)) {
-
-                        return array_map(function($a) use ($prefix,$alias) {
-                            if (in_array(gettype($a),array('integer','double'))) {
-                                $a = number_format($a, 0, '', '');
-                            }
-                            return $prefix.'_'.$alias.'='.$a;
-                        },$v);
-                    } else {
-
-                        if (in_array(gettype($v),array('integer','double'))) {
-                            $v = number_format($v, 0, '', '');
-                        }
-                        return $prefix.'_'.$alias.'='.$v;
-                    }
-                }
-            }
-
         }
 
         return false;
@@ -361,27 +337,18 @@ class Helper
         }
 
         if ($value[0] == ':') {
+            $prefix = null;
+        }
 
-            $alias = ltrim($value, ':');
+        $alias = ltrim($value, ':');
 
-            foreach ($tags as $k => $v){
-                if ($k == $name) {
-                    if (is_array($v)) {
-                        return array_map(function($a) use ($alias) {return $alias.'='.$a; },$v);
-                    } else {
-                        return $alias.'='.$v;
-                    }
-                }
-            }
-        } else {
-            $alias = $value;
-            foreach ($tags as $k => $v){
-                if ($k == $name) {
-                    if (is_array($v)) {
-                        return array_map(function($a) use ($prefix,$alias) {return $prefix.'_'.$alias.'='.$a; },$v);
-                    } else {
-                        return $prefix.'_'.$alias.'='.$v;
-                    }
+
+        foreach ($tags as $k => $v){
+            if ($k == $name) {
+                if (is_array($v)) {
+                    return array_map(function($a) use ($alias,$prefix) {return (!empty($prefix)?$prefix.'_':'').$alias.'='.$a; },$v);
+                } else {
+                    return (!empty($prefix)?$prefix.'_':'').$alias.'='.$v;
                 }
             }
         }
