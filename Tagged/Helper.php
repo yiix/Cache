@@ -146,9 +146,7 @@ class Helper
         $primaryKey = $model->getTableSchema()->primaryKey;
         if (is_array($primaryKey)) {
             if (!is_array($pk)) {
-                if ($val) {
-                    $tagValues[array_shift($primaryKey)] = $pk;
-                }
+                $tagValues[array_shift($primaryKey)] = $pk;
             } else {
                 foreach ($pk as $key=>$val) {
                     if (in_array($key,$primaryKey)) {
