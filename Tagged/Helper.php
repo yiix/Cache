@@ -43,7 +43,7 @@ class Helper
      * Generate list of tags based on predefainded rules at model
      *
      * @param CActiveRecord $model
-     * @param array $attrbutes
+     * @param array|CDbCriteria $attrbutes
      * @return array
      */
     public static function generateTags($model, $attributes=array(),$mode='read')
